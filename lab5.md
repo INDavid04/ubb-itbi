@@ -1,5 +1,17 @@
 # Laboratorul 5 Shell
 
+## 2. Modificati unele din scripturile de la laborator pentru a primi datele necesare ca parametrii in linie de comanda, in loc sa fie cititie de la tastatura (e.g. scripturile care identifica tipuri de fisiere)
+- Mergi la scripts/param-type.sh
+
+## 3. Scrieti propria versiune a comenzii   `ls` fara niciun parametru (adica pentru a lista continutul directorului curent)
+- Mergi la scripts/ls.sh
+
+## 4. Scrieti un script care foloseste o comanda de tip pipeline pentru a afisa utilizatorii si PID-urile proceselor lor asa cum sunt afisate de comanda `ps auxw`. Scriptul trebuie sa captureze intr-un pipe outputul comenzii `ps auxw` si sa itereze prin fiecare linie tiparind primele doua campuri ale outputului, cele care corespund utilizatorului si PID-ului.
+- Mergi la scripts/ps-auxw.sh
+
+## 5. Scrieti un script myfind care emuleaza comportamentul simplificat al comenzii `find` cu flagurile -name, -type si -exec. Comanda primeste ca prim parametru un director si nu functioneaza recursiv (i.e. maxdepth = 1). Trebuie sa fie capabila sa gaseasca un fisier dupa nume si/sau tip si odata identificat sa poata executa o comanda asupra lui. Numele, tipul si comanda de executie sunt furnizate ca parametrii in linia de comanda, exact ca pentru comanda `find` (`man find`)
+- Mergi la scripts/find.sh
+
 ## Codul din terminal
 ```
 Welcome to Ubuntu 24.04.1 LTS (GNU/Linux 5.15.167.4-microsoft-standard-WSL2 x86_64)
