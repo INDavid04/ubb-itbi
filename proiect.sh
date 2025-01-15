@@ -1,52 +1,72 @@
 #!/bin/bash
 
+counter=0
+
 verifica_daca_exista_broken_links() {
-    # Salvam primii doi parametrii
     local director="$1"           
     local follow_symlinks="$2"
-    local delete_broken_links="$3"
-
-    # Cautarea recursiva
+    local RED='\033[0;31m'
+    local WHITE='\033[1;37m'
     for element in "$director"/*; do
         if [ -L "$element" ]; then # link simbolic
             if [ ! -e "$element" ]; then # broken link
-                echo "Broken link: $element -> $(readlink "$element")"
-                if [ $delete_broken_links == "--delete" ]; then
-                    rm $element 
-                fi
+                echo -e "$RED Broken link: $element -> $(readlink "$element")"
+                echo "Broken link: $element -> $(readlink "$element")" >> $data_ora.txt
+                ((counter++))
             elif [ "$follow_symlinks" = true ] && [ -d "$element" ]; then # director
-                echo "Following symlink directory: $element"
+                echo -e "$WHITE Following Symlink: $element"
                 verifica_daca_exista_broken_links "$(readlink -f "$element")" "$follow_symlinks"
             fi
         elif [ -d "$element" ]; then # director
+            echo -e "$WHITE Se verifica directorul: $element"
             verifica_daca_exista_broken_links "$element" "$follow_symlinks"
         fi
     done
 }
 
+stergere() {
+    local director="$1"           
+    for element in "$director"/*; do
+        if [ -L "$element" ]; then # link simbolic
+            if [ ! -e "$element" ]; then # broken link
+                rm $element
+            fi
+        elif [ -d "$element" ]; then # director
+            stergere "$element"
+        fi
+    done
+}
+
 main() {
-    # Daca nu avem parametrii, afisam un mesaj si iesim
-    if [ $# -lt 1 ]; then
-        echo "Usage: $0 <director> [--follow-symlinks]"
+    data_ora=$(date | sed 's/ /_/g')
+    echo $data_ora
+    local GREEN='\033[0;32m'
+    local WHITE='\033[1;37m'
+    if [ $# -lt 1 ]; then # nu avem parametrii
+        echo "Nu ati ales un director"
         exit 1
     fi
-
-    # Presupunem ca avem un singur parametru, directorul
+    touch $data_ora.txt
     local director="$1"
     local follow_symlinks=false
 
-    # Verificam daca al doilea parametru este --follow-symlinks
-    if [ "$2" = "--follow-symlinks" ]; then 
+    if [ "$2" = "--follow-symlinks" ]; then # verificam daca al doilea parametru este --follow-symlinks
         follow_symlinks=true  # urmarim symlinks
     fi
 
-    # Daca nu exista directorul
-    if [ ! -d "$director" ]; then 
-        echo "Error: $director is not a directory"
+    if [ ! -d "$director" ]; then # daca nu exista directorul
+        echo "$director nu e director"
         exit 1
     fi
-
     verifica_daca_exista_broken_links "$director" "$follow_symlinks"
+    echo -e "$GREEN Number of broken links: $counter"
+    echo "Number of broken links: $counter" >>$data_ora.txt
+    echo -e "$WHITE Vreti sa stergem Broken Links(DA / NU):"
+    read input
+    if [ "$input" = "DA" ]; then
+        stergere "$director"
+    fi
+
 }
 
 main "$@"
